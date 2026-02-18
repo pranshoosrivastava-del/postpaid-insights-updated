@@ -164,6 +164,53 @@ const PPInsightsDashboard = () => {
           ))}
         </div>
       </div>
+
+      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-6 text-xl font-semibold text-gray-900">Today's Repayment Flow</h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {[
+            {
+              path: 'Path A',
+              label: 'Auto-Debit',
+              amount: '₹28.2 Cr',
+              txns: '52,400 transactions',
+              bg: 'bg-blue-50',
+              border: 'border-blue-200',
+              pathBg: 'bg-blue-600',
+              amountColor: 'text-blue-700',
+            },
+            {
+              path: 'Path B',
+              label: 'Manual App Payment',
+              amount: '₹7.5 Cr',
+              txns: '8,200 transactions',
+              bg: 'bg-green-50',
+              border: 'border-green-200',
+              pathBg: 'bg-green-600',
+              amountColor: 'text-green-700',
+            },
+            {
+              path: 'Path C',
+              label: 'Collection Links',
+              amount: '₹3.0 Cr',
+              txns: '4,100 transactions',
+              bg: 'bg-yellow-50',
+              border: 'border-yellow-200',
+              pathBg: 'bg-yellow-500',
+              amountColor: 'text-yellow-700',
+            },
+          ].map((flow) => (
+            <div key={flow.path} className={`rounded-xl border ${flow.border} ${flow.bg} p-5`}>
+              <span className={`inline-block rounded px-2 py-1 text-xs font-bold text-white ${flow.pathBg}`}>
+                {flow.path}
+              </span>
+              <div className="mt-2 text-base font-bold text-gray-900">{flow.label}</div>
+              <div className={`mt-1 text-2xl font-bold ${flow.amountColor}`}>{flow.amount}</div>
+              <div className="mt-1 text-xs text-gray-500">{flow.txns}</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -764,196 +811,283 @@ const PPInsightsDashboard = () => {
     </div>
   );
 
-  const FinanceRecon = () => (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+  const FinanceRecon = () => {
+    const ledgerVarianceRows = [
+      {
+        metric: 'Principal Repaid',
+        ourSystem: '₹1,875,000',
+        lenderBook: '₹1,890,000',
+        variance: '-₹15,000',
+        status: 'Mismatch',
+        owner: 'Finance Ops',
+      },
+      {
+        metric: 'Late Fee Collection',
+        ourSystem: '₹28,000',
+        lenderBook: '₹31,000',
+        variance: '-₹3,000',
+        status: 'Mismatch',
+        owner: 'Partner Team',
+      },
+      {
+        metric: 'Bounce Charges',
+        ourSystem: '₹15,000',
+        lenderBook: '₹15,000',
+        variance: '₹0',
+        status: 'Matched',
+        owner: 'System',
+      },
+      {
+        metric: 'GST Allocation',
+        ourSystem: '₹12,430',
+        lenderBook: '₹12,220',
+        variance: '+₹210',
+        status: 'Review',
+        owner: 'Tax Desk',
+      },
+    ];
+
+    return (
+      <div className="space-y-5">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Finance & Reconciliation</h1>
+          <p className="mt-1 text-sm text-gray-600">Recovery Yield & Fee Integrity</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Bill Cycle:</span>
-            <select className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm">
-              <option>Nov Cycle</option>
-              <option>Dec Cycle</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Lender:</span>
-            <select className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm">
-              <option>All Lenders</option>
-            </select>
-          </div>
-        </div>
-      </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-xl font-bold text-gray-900">Recovery Pulse & Fee Integrity</h2>
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="rounded-lg bg-gray-50 p-5">
-            <h3 className="mb-4 text-base font-semibold text-gray-700">Collection Efficiency Funnel</h3>
-            <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">Collection Efficiency Funnel</h3>
+            <div className="space-y-3">
               {[
-                { label: 'Total Billable', amount: '₹2.4M', width: 100, color: 'blue' },
-                { label: 'Paid in Grace (0-7 Days)', amount: '₹1.8M', width: 75, color: 'green' },
-                { label: 'Paid via Mandate (Day 3+)', amount: '₹450K', width: 18.75, color: 'purple' },
-                { label: 'Overdue', amount: '₹150K', width: 6.25, color: 'red' },
-              ].map((item, idx) => (
-                <div key={idx}>
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm text-gray-600">{item.label}</span>
-                    <span
-                      className={`text-lg font-bold text-${
-                        item.color === 'green' ? 'green' : item.color === 'purple' ? 'purple' : item.color === 'red' ? 'red' : 'gray'
-                      }-600`}
-                    >
-                      {item.amount}
-                    </span>
+                { label: 'Total Billable', value: '₹2.4M', width: 100, bar: 'bg-blue-500' },
+                { label: 'Paid in Grace', value: '₹1.8M', width: 75, bar: 'bg-green-500' },
+                { label: 'Paid via Mandate', value: '₹450K', width: 18.75, bar: 'bg-blue-500' },
+                { label: 'Overdue', value: '₹150K', width: 6.25, bar: 'bg-red-500' },
+              ].map((item) => (
+                <div key={item.label}>
+                  <div className="mb-1 flex justify-between text-xs">
+                    <span className="text-gray-600">{item.label}</span>
+                    <span className="font-semibold text-gray-900">{item.value}</span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-                    <div className={`h-full bg-${item.color}-500`} style={{ width: `${item.width}%` }} />
+                  <div className="h-1.5 overflow-hidden rounded-full bg-gray-200">
+                    <div className={`h-full ${item.bar}`} style={{ width: `${item.width}%` }} />
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-lg bg-gray-50 p-5">
-            <h3 className="mb-4 text-base font-semibold text-gray-700">Fee Recon Breakdown</h3>
-            <div className="space-y-4">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">Recovery Breakdown</h3>
+            <div className="space-y-3">
               {[
-                { fee: 'Convenience Fee', system: '₹45,000', billed: '₹45,000', status: 'Matched', color: 'green' },
-                { fee: 'Late Payment Fee', system: '₹28,000', billed: '₹31,000', status: 'Mismatch', color: 'red' },
-                { fee: 'Bounce Charges', system: '₹15,000', billed: '₹15,000', status: 'Matched', color: 'green' },
-              ].map((item, idx) => (
-                <div key={idx}>
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">{item.fee}</span>
-                    <span className={`rounded bg-${item.color}-100 px-2 py-1 text-xs font-semibold text-${item.color}-700`}>
-                      {item.status}
-                    </span>
+                { label: 'Mandate Success', value: '72.1%', bar: 72.1, tone: 'text-green-600' },
+                { label: 'Manual Collection', value: '18.4%', bar: 18.4, tone: 'text-blue-600' },
+                { label: 'Failed & Pending', value: '9.5%', bar: 9.5, tone: 'text-red-600' },
+              ].map((item) => (
+                <div key={item.label}>
+                  <div className="mb-1 flex justify-between text-xs">
+                    <span className="text-gray-600">{item.label}</span>
+                    <span className={`font-semibold ${item.tone}`}>{item.value}</span>
                   </div>
-                  <div className="mb-2 grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <div className="mb-1 text-gray-500">System: {item.system}</div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-gray-200">
-                        <div className="h-full bg-blue-500" style={{ width: '100%' }} />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="mb-1 text-gray-500">Billed: {item.billed}</div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-gray-200">
-                        <div className={`h-full bg-${item.color}-500`} style={{ width: '100%' }} />
-                      </div>
-                    </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-full bg-blue-500" style={{ width: `${item.bar}%` }} />
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-lg bg-gray-50 p-5">
-            <h3 className="mb-4 text-base font-semibold text-gray-700">Delta Indicators</h3>
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="mb-1 text-3xl font-bold text-red-600">₹85,420</div>
-                <div className="mb-2 text-sm text-gray-700">Unreconciled Principal</div>
-                <div className="flex items-center justify-center gap-1 text-xs text-red-600">
-                  <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                  </svg>
-                  <span>+12% from last cycle</span>
-                </div>
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">Delta Indicators</h3>
+            <div className="space-y-4 text-center">
+              <div>
+                <div className="text-xs text-gray-500">New Variance</div>
+                <div className="text-3xl font-bold text-red-600">₹85,420</div>
+                <div className="text-xs text-red-600">+12% from last cycle</div>
               </div>
-              <div className="text-center">
-                <div className="mb-1 text-3xl font-bold text-orange-600">₹12,340</div>
-                <div className="mb-2 text-sm text-gray-700">Fee Variance</div>
-                <div className="flex items-center justify-center gap-1 text-xs text-green-600">
-                  <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                  <span>-5% from last cycle</span>
-                </div>
+              <div>
+                <div className="text-xs text-gray-500">Fee Difference</div>
+                <div className="text-2xl font-bold text-orange-600">₹12,340</div>
+                <div className="text-xs text-green-600">-5% from last cycle</div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-2 text-xl font-bold text-gray-900">Lender vs. System Reconciliation</h2>
-        <div className="rounded-lg bg-gray-50 p-6">
-          <h3 className="mb-1 text-base font-semibold text-gray-900">Ledger Comparison</h3>
-          <p className="mb-4 text-sm text-gray-600">Comparing internal system records with lender statements</p>
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-4 text-sm font-semibold text-gray-900">L1 Ledger Variance</h2>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-gray-600">Metric</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-gray-600">Our System</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-gray-600">Lender Statement</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-gray-600">Delta</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase text-gray-600">Status</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase text-gray-600">Metric</th>
+                  <th className="px-3 py-2 text-right text-xs font-semibold uppercase text-gray-600">Our System</th>
+                  <th className="px-3 py-2 text-right text-xs font-semibold uppercase text-gray-600">Lender Book</th>
+                  <th className="px-3 py-2 text-right text-xs font-semibold uppercase text-gray-600">Variance</th>
+                  <th className="px-3 py-2 text-center text-xs font-semibold uppercase text-gray-600">Status</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase text-gray-600">Owner</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
-                {[
-                  {
-                    metric: 'Total Disbursed (Principal)',
-                    system: '₹2,450,000',
-                    lender: '₹2,450,000',
-                    delta: '₹0',
-                    status: 'Matched',
-                    color: 'green',
-                    bg: '',
-                  },
-                  {
-                    metric: 'Total Repaid (Principal)',
-                    system: '₹1,875,000',
-                    lender: '₹1,890,000',
-                    delta: '-₹15,000',
-                    status: 'Mismatch',
-                    color: 'red',
-                    bg: 'bg-red-50',
-                  },
-                  {
-                    metric: 'Outstanding Principal',
-                    system: '₹575,000',
-                    lender: '₹560,000',
-                    delta: '+₹15,000',
-                    status: 'Mismatch',
-                    color: 'red',
-                    bg: 'bg-red-50',
-                  },
-                ].map((row, idx) => (
-                  <tr key={idx} className={`hover:bg-gray-50 ${row.bg}`}>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{row.metric}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-900">{row.system}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-900">{row.lender}</td>
-                    <td className={`px-4 py-3 text-right text-sm font-semibold text-${row.color}-600`}>{row.delta}</td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`rounded bg-${row.color}-100 px-2 py-1 text-xs font-medium text-${row.color}-700`}>
+              <tbody className="divide-y divide-gray-200">
+                {ledgerVarianceRows.map((row) => (
+                  <tr key={row.metric} className="hover:bg-gray-50">
+                    <td className="px-3 py-2 text-sm font-medium text-gray-900">{row.metric}</td>
+                    <td className="px-3 py-2 text-right text-sm text-gray-900">{row.ourSystem}</td>
+                    <td className="px-3 py-2 text-right text-sm text-gray-900">{row.lenderBook}</td>
+                    <td className={`px-3 py-2 text-right text-sm font-semibold ${row.variance.includes('-') ? 'text-red-600' : row.variance === '₹0' ? 'text-green-600' : 'text-yellow-700'}`}>
+                      {row.variance}
+                    </td>
+                    <td className="px-3 py-2 text-center">
+                      <span
+                        className={`rounded px-2 py-1 text-xs font-semibold ${
+                          row.status === 'Matched'
+                            ? 'bg-green-100 text-green-700'
+                            : row.status === 'Mismatch'
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                        }`}
+                      >
                         {row.status}
                       </span>
                     </td>
+                    <td className="px-3 py-2 text-sm text-gray-700">{row.owner}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <div className="mt-4 flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4">
-            <div>
-              <span className="text-sm text-gray-700">Total Variance: </span>
-              <span className="text-lg font-bold text-red-600">₹32,500</span>
-              <span className="ml-3 text-sm font-medium text-red-600">3 mismatches detected</span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">Mandate Execution & Repayment Recon</h3>
+            <div className="space-y-3">
+              {[
+                { day: 'D+0', triggered: '40,000', success: 76 },
+                { day: 'D+1', triggered: '35,500', success: 68 },
+                { day: 'D+2', triggered: '30,000', success: 61 },
+                { day: 'D+3', triggered: '24,200', success: 54 },
+                { day: 'D+4', triggered: '18,900', success: 49 },
+                { day: 'D+5', triggered: '13,100', success: 44 },
+              ].map((item) => (
+                <div key={item.day}>
+                  <div className="mb-1 flex justify-between text-xs">
+                    <span className="text-gray-600">{item.day}</span>
+                    <span className="text-gray-500">Triggers: {item.triggered}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-full bg-blue-500" style={{ width: `${item.success}%` }} />
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="flex gap-3">
-              <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
-                Export Report
-              </button>
+            <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-3 text-xs">
+              <span className="font-semibold text-blue-600">72.1% recovery efficiency</span>
+              <span className="font-semibold text-green-600">+2.2% vs last cycle</span>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">Failure Leakage & Recovery Action</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase text-gray-600">Issue Bucket</th>
+                    <th className="px-3 py-2 text-right text-xs font-semibold uppercase text-gray-600">Count</th>
+                    <th className="px-3 py-2 text-center text-xs font-semibold uppercase text-gray-600">Recovery</th>
+                    <th className="px-3 py-2 text-center text-xs font-semibold uppercase text-gray-600">Severity</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {[
+                    { bucket: 'Insufficient Balance', count: 4532, recovery: '42%', severity: 'Medium' },
+                    { bucket: 'Mandate Failure', count: 1298, recovery: '18%', severity: 'High' },
+                    { bucket: 'Fraud/Chargeback', count: 214, recovery: '6%', severity: 'High' },
+                    { bucket: 'Network Timeout', count: 889, recovery: '71%', severity: 'Low' },
+                  ].map((row) => (
+                    <tr key={row.bucket}>
+                      <td className="px-3 py-2 text-sm text-gray-900">{row.bucket}</td>
+                      <td className="px-3 py-2 text-right text-sm text-gray-700">{row.count.toLocaleString()}</td>
+                      <td className="px-3 py-2 text-center text-sm text-blue-600">{row.recovery}</td>
+                      <td className="px-3 py-2 text-center">
+                        <span
+                          className={`rounded px-2 py-1 text-xs font-semibold ${
+                            row.severity === 'High' ? 'bg-red-100 text-red-700' : row.severity === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
+                          }`}
+                        >
+                          {row.severity}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">DPD & NPA Dashboard</h3>
+            <div className="space-y-3">
+              {[
+                { label: 'Performing (0 DPD)', pct: 81, tone: 'bg-gray-900' },
+                { label: 'SMA-1 (1-30)', pct: 11, tone: 'bg-blue-500' },
+                { label: 'SMA-2 (31-60)', pct: 5, tone: 'bg-yellow-500' },
+                { label: 'NPA (61+)', pct: 3, tone: 'bg-red-500' },
+              ].map((bucket) => (
+                <div key={bucket.label}>
+                  <div className="mb-1 flex justify-between text-xs">
+                    <span className="text-gray-600">{bucket.label}</span>
+                    <span className="font-semibold text-gray-900">{bucket.pct}%</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+                    <div className={`h-full ${bucket.tone}`} style={{ width: `${bucket.pct}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex justify-between border-t border-gray-200 pt-3 text-xs">
+              <span className="font-semibold text-gray-900">12,480 accounts in delinquency flow</span>
+              <span className="font-semibold text-red-600">NPA ratio: 3.0%</span>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">Non-Recoverable & Write-off Dashboard</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left text-xs font-semibold uppercase text-gray-600">Bucket</th>
+                    <th className="px-3 py-2 text-right text-xs font-semibold uppercase text-gray-600">Cases</th>
+                    <th className="px-3 py-2 text-right text-xs font-semibold uppercase text-gray-600">Amount</th>
+                    <th className="px-3 py-2 text-right text-xs font-semibold uppercase text-gray-600">Write-off %</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {[
+                    { bucket: 'Legal Hold', cases: 134, amount: '₹24.8L', wo: '18.2%' },
+                    { bucket: 'Fraud Confirmed', cases: 68, amount: '₹19.4L', wo: '42.8%' },
+                    { bucket: 'Field Exhausted', cases: 411, amount: '₹57.2L', wo: '26.1%' },
+                    { bucket: 'Deceased/Hardship', cases: 27, amount: '₹4.1L', wo: '11.6%' },
+                  ].map((row) => (
+                    <tr key={row.bucket}>
+                      <td className="px-3 py-2 text-sm text-gray-900">{row.bucket}</td>
+                      <td className="px-3 py-2 text-right text-sm text-gray-700">{row.cases}</td>
+                      <td className="px-3 py-2 text-right text-sm text-gray-900">{row.amount}</td>
+                      <td className="px-3 py-2 text-right text-sm text-red-600">{row.wo}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-3 flex justify-end">
               <button
                 onClick={openReconciliationModal}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold hover:bg-gray-50"
               >
                 Reconcile
               </button>
@@ -961,66 +1095,147 @@ const PPInsightsDashboard = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const Customer360 = () => (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Customer 360</h1>
         <div className="flex gap-2">
-          <button className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Block Account</button>
-          <button className="rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50">Export Ledger</button>
+          <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+            Block Account
+          </button>
+          <button className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50">
+            Export Ledger
+          </button>
         </div>
       </div>
 
-      <div className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 p-6 text-white">
+      <div className="rounded-xl bg-gradient-to-r from-cyan-600 to-blue-700 p-6 text-white">
         <div className="flex items-start justify-between">
           <div>
             <h2 className="mb-2 text-2xl font-bold">Rahul Sharma</h2>
-            <div className="space-y-1 text-cyan-50">
+            <div className="space-y-1 text-sm text-cyan-100">
               <div>Mobile: +91 98765 43210</div>
               <div>Paytm ID: PTM_8372649201</div>
               <div>LAN: AB_LN_2024_847362</div>
               <div>Partner: Aditya Birla Finance</div>
             </div>
           </div>
-          <div className="rounded-full bg-green-500 px-4 py-2 font-semibold">ACTIVE</div>
+          <div className="rounded-full bg-green-500 px-4 py-2 text-sm font-bold">ACTIVE</div>
         </div>
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-xl font-semibold text-gray-900">Financial Ledger</h2>
-        <div className="mb-6">
-          <div className="mb-2 text-sm text-gray-600">Total Outstanding</div>
-          <div className="text-4xl font-bold text-red-600">₹18,450</div>
-        </div>
-        <div className="space-y-3 rounded-lg bg-gray-50 p-4">
-          <div className="flex items-center justify-between">
-            <div className="text-gray-700">Principal Component</div>
-            <div className="text-gray-900">₹15,000</div>
+        <h2 className="mb-1 text-xl font-bold text-gray-900">Financial Ledger</h2>
+        <div className="mb-1 text-sm text-gray-500">Total Outstanding</div>
+        <div className="mb-6 text-4xl font-bold text-red-600">₹18,450</div>
+
+        <div className="space-y-0 divide-y divide-gray-200">
+          <div className="flex items-center justify-between py-3">
+            <div className="font-medium text-gray-900">Principal Component</div>
+            <div className="font-medium text-gray-900">₹15,000</div>
           </div>
-          <div className="ml-4 space-y-2 border-l-2 border-gray-300 pl-4">
-            {[
-              { label: 'Convenience Fee', amount: '₹450' },
-              { label: 'Late Payment Fee', amount: '₹2,500' },
-              { label: 'Bounce Charges', amount: '₹500' },
-            ].map((item, idx) => (
-              <div key={idx} className="flex items-center justify-between text-sm">
-                <div className="text-gray-700">{item.label}</div>
-                <div className="text-gray-900">{item.amount}</div>
-              </div>
-            ))}
-          </div>
-          <div className="border-t-2 border-gray-300 pt-3">
-            <div className="flex items-center justify-between">
-              <div className="font-bold">Total Due</div>
-              <div className="text-lg font-bold">₹18,450</div>
+          {[
+            { label: 'Convenience Fee', amount: '₹450' },
+            { label: 'Late Payment Fee', amount: '₹2,500' },
+            { label: 'Bounce Charges', amount: '₹500' },
+          ].map((item) => (
+            <div key={item.label} className="flex items-center justify-between py-3 pl-6">
+              <div className="text-sm text-gray-600">{item.label}</div>
+              <div className="text-sm text-gray-900">{item.amount}</div>
             </div>
+          ))}
+          <div className="flex items-center justify-between py-3">
+            <div className="text-base font-bold text-gray-900">Total Due</div>
+            <div className="text-lg font-bold text-gray-900">₹18,450</div>
           </div>
         </div>
       </div>
 
+      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-6 text-xl font-bold text-gray-900">Repayment Behavior Log</h2>
+        <div className="space-y-4">
+          {[
+            {
+              amount: '₹5,000',
+              source: 'Manual App',
+              reason: null,
+              date: '2026-01-15',
+              status: 'Success',
+            },
+            {
+              amount: '₹10,000',
+              source: 'Auto Debit',
+              reason: 'Insufficient Funds',
+              date: '2026-01-07',
+              status: 'Failed',
+            },
+            {
+              amount: '₹8,200',
+              source: 'UPI AutoPay',
+              reason: null,
+              date: '2025-12-15',
+              status: 'Success',
+            },
+            {
+              amount: '₹8,200',
+              source: 'Auto Debit',
+              reason: 'Bank Server Down',
+              date: '2025-12-03',
+              status: 'Failed',
+            },
+            {
+              amount: '₹6,500',
+              source: 'Manual App',
+              reason: null,
+              date: '2025-11-14',
+              status: 'Success',
+            },
+          ].map((entry) => (
+            <div
+              key={entry.date + entry.amount}
+              className={`flex items-start gap-4 rounded-lg border p-4 ${
+                entry.status === 'Failed' ? 'border-red-100 bg-red-50' : 'border-gray-200 bg-white'
+              }`}
+            >
+              <div
+                className={`mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full ${
+                  entry.status === 'Success' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                }`}
+              >
+                {entry.status === 'Success' ? (
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="text-base font-bold text-gray-900">{entry.amount}</div>
+                <div className="text-sm text-gray-600">Source: {entry.source}</div>
+                {entry.reason && (
+                  <div className="mt-0.5 text-sm text-red-600">Reason: {entry.reason}</div>
+                )}
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-gray-500">{entry.date}</div>
+                <span
+                  className={`mt-1 inline-block rounded px-2 py-1 text-xs font-semibold ${
+                    entry.status === 'Success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}
+                >
+                  {entry.status}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
