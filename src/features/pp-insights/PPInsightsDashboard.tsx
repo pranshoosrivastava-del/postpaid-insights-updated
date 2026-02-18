@@ -3,6 +3,10 @@ import styled from 'styled-components';
 import { FUNNEL_STAGES, NAV_ITEMS } from './constants';
 import PPInsightsSidebar from './components/PPInsightsSidebar';
 import ReconciliationModal from './components/ReconciliationModal';
+import BillGenRecon from './components/BillGenRecon';
+import MOMLenderBilling from './components/MOMLenderBilling';
+import DailyDuesRecon from './components/DailyDuesRecon';
+import RepaymentSnapshot from './components/RepaymentSnapshot';
 import PPInsightsThemeBridge from './PPInsightsThemeBridge';
 import type { DashboardViewId, ReconType } from './types';
 
@@ -31,7 +35,7 @@ const PPInsightsDashboard = () => {
   const [reconComments, setReconComments] = useState('');
   const [selectedReconType, setSelectedReconType] = useState<ReconType>('auto');
   const [selectedReconItems, setSelectedReconItems] = useState<string[]>([]);
-
+  const [financeTab, setFinanceTab] = useState<'overview' | 'billgen' | 'mom' | 'daily' | 'repayment'>('overview');
 
   const toggleFunnelStage = (stageId: string) => {
     setExpandedFunnelStage(expandedFunnelStage === stageId ? null : stageId);
@@ -847,6 +851,14 @@ const PPInsightsDashboard = () => {
       },
     ];
 
+    const FINANCE_TABS: { id: typeof financeTab; label: string }[] = [
+      { id: 'overview', label: 'Overview' },
+      { id: 'billgen', label: 'Bill Gen Recon' },
+      { id: 'mom', label: 'MOM Lender Billing' },
+      { id: 'daily', label: 'Daily Dues Recon' },
+      { id: 'repayment', label: 'Repayment Snapshot' },
+    ];
+
     return (
       <div className="space-y-5">
         <div>
@@ -854,6 +866,28 @@ const PPInsightsDashboard = () => {
           <p className="mt-1 text-sm text-gray-600">Recovery Yield & Fee Integrity</p>
         </div>
 
+        <div className="flex gap-1 overflow-x-auto border-b border-gray-200">
+          {FINANCE_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setFinanceTab(tab.id)}
+              className={`whitespace-nowrap px-4 py-2.5 text-sm font-semibold transition-colors ${
+                financeTab === tab.id
+                  ? 'border-b-2 border-blue-600 text-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {financeTab === 'billgen' && <BillGenRecon />}
+        {financeTab === 'mom' && <MOMLenderBilling />}
+        {financeTab === 'daily' && <DailyDuesRecon />}
+        {financeTab === 'repayment' && <RepaymentSnapshot />}
+
+        {financeTab === 'overview' && <>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
             <h3 className="mb-3 text-sm font-semibold text-gray-700">Collection Efficiency Funnel</h3>
@@ -1094,6 +1128,7 @@ const PPInsightsDashboard = () => {
             </div>
           </div>
         </div>
+        </>}
       </div>
     );
   };
