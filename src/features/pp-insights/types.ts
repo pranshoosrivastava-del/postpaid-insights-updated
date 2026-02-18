@@ -7,8 +7,14 @@ export type DashboardViewId =
   | 'collections'
   | 'risk'
   | 'finance'
+  | 'dpdRecon'
   | 'customer360'
-  | 'watchtower';
+  | 'watchtower'
+  | 'portfolioAccountStatus'
+  | 'portfolioLimitSpread'
+  | 'portfolioVintage'
+  | 'portfolioGeo'
+  | 'portfolioDemographics';
 
 export type StageColor =
   | 'blue'
@@ -24,6 +30,7 @@ export type StageColor =
 export interface NavItem {
   id: DashboardViewId;
   label: string;
+  children?: NavItem[];
 }
 
 export interface FunnelSubStage {

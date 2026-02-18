@@ -1,14 +1,21 @@
-import type { ComponentType } from 'react';
+import { useState, type ComponentType } from 'react';
 import styled from 'styled-components';
 import type { DashboardViewId, NavItem } from '../types';
 import {
   BadgeIndianRupee,
+  BarChart3,
+  CalendarClock,
+  ChevronDown,
   CircleUserRound,
+  Globe,
   LayoutDashboard,
+  MapPin,
+  PieChart,
   Radar,
   ShieldCheck,
   ShieldEllipsis,
   Target,
+  Users,
   WalletCards,
 } from 'lucide-react';
 
@@ -20,15 +27,26 @@ interface PPInsightsSidebarProps {
   onViewChange: (viewId: DashboardViewId) => void;
 }
 
-const NAV_ICONS: Record<DashboardViewId, ComponentType<{ className?: string }>> = {
+const NAV_ICONS: Partial<Record<DashboardViewId, ComponentType<{ className?: string }>>> = {
   cockpit: LayoutDashboard,
   acquisition: Target,
   portfolio: WalletCards,
   collections: BadgeIndianRupee,
   risk: ShieldCheck,
   finance: ShieldEllipsis,
+  dpdRecon: CalendarClock,
   customer360: CircleUserRound,
   watchtower: Radar,
+  portfolioAccountStatus: PieChart,
+  portfolioLimitSpread: BarChart3,
+  portfolioVintage: CalendarClock,
+  portfolioGeo: MapPin,
+  portfolioDemographics: Users,
+};
+
+const GROUP_ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  'Finance & Recon': ShieldEllipsis,
+  'Portfolio Analytics': Globe,
 };
 
 const Sidebar = styled.aside`
@@ -86,7 +104,7 @@ const Nav = styled.nav`
 
 const NavList = styled.div`
   display: grid;
-  gap: 6px;
+  gap: 4px;
 `;
 
 const NavBtn = styled.button<{ $active: boolean }>`
@@ -114,6 +132,49 @@ const NavLabel = styled.span`
   font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
 `;
 
+const GroupHeader = styled.button<{ $open: boolean }>`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.glass.textSecondary};
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.glass.surfaceHover};
+    color: ${({ theme }) => theme.glass.text};
+  }
+`;
+
+const SubList = styled.div`
+  padding-left: 20px;
+  display: grid;
+  gap: 2px;
+`;
+
+const SubBtn = styled.button<{ $active: boolean }>`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: 8px 12px;
+  border: 1px solid ${({ theme, $active }) => ($active ? `${theme.colors.primary}55` : 'transparent')};
+  background: ${({ theme, $active }) => ($active ? `${theme.colors.primary}18` : 'transparent')};
+  color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.glass.textSecondary)};
+  font-size: 13px;
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.glass.surfaceHover};
+    color: ${({ theme }) => theme.glass.text};
+  }
+`;
+
 const Footer = styled.div`
   border-top: 1px solid ${({ theme }) => theme.glass.borderLight};
   padding: ${({ theme }) => theme.spacing.md};
@@ -128,11 +189,30 @@ const PPInsightsSidebar = ({
   onSearchChange,
   onViewChange,
 }: PPInsightsSidebarProps) => {
+  const [openGroups, setOpenGroups] = useState<Set<string>>(() => {
+    const initial = new Set<string>();
+    navItems.forEach((item) => {
+      if (item.children?.some((c) => c.id === activeView)) {
+        initial.add(item.label);
+      }
+    });
+    return initial;
+  });
+
+  const toggleGroup = (label: string) => {
+    setOpenGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return next;
+    });
+  };
+
   return (
     <Sidebar>
       <Brand>
         <BrandTitle>PP Insights</BrandTitle>
-        <BrandSub>Lending Command Center</BrandSub>
+        <BrandSub>Global Lending Command Center</BrandSub>
       </Brand>
 
       <SearchWrap>
@@ -147,10 +227,42 @@ const PPInsightsSidebar = ({
       <Nav>
         <NavList>
           {navItems.map((item) => {
+            if (item.children) {
+              const isOpen = openGroups.has(item.label);
+              const isGroupActive = item.children.some((c) => c.id === activeView);
+              const GIcon = GROUP_ICONS[item.label] || NAV_ICONS[item.id];
+
+              return (
+                <div key={item.label}>
+                  <GroupHeader $open={isOpen} onClick={() => toggleGroup(item.label)}>
+                    {GIcon && <GIcon className="h-4 w-4 shrink-0" />}
+                    <NavLabel style={{ fontWeight: isGroupActive ? 600 : undefined }}>{item.label}</NavLabel>
+                    <ChevronDown
+                      className="h-3.5 w-3.5 shrink-0 transition-transform"
+                      style={{ transform: isOpen ? 'rotate(180deg)' : undefined }}
+                    />
+                  </GroupHeader>
+                  {isOpen && (
+                    <SubList>
+                      {item.children.map((child) => {
+                        const CIcon = NAV_ICONS[child.id];
+                        return (
+                          <SubBtn key={child.id} $active={activeView === child.id} onClick={() => onViewChange(child.id)}>
+                            {CIcon && <CIcon className="h-3.5 w-3.5 shrink-0" />}
+                            <NavLabel>{child.label}</NavLabel>
+                          </SubBtn>
+                        );
+                      })}
+                    </SubList>
+                  )}
+                </div>
+              );
+            }
+
             const Icon = NAV_ICONS[item.id];
             return (
               <NavBtn key={item.id} onClick={() => onViewChange(item.id)} $active={activeView === item.id}>
-                <Icon className="h-4 w-4 shrink-0" />
+                {Icon && <Icon className="h-4 w-4 shrink-0" />}
                 <NavLabel>{item.label}</NavLabel>
               </NavBtn>
             );

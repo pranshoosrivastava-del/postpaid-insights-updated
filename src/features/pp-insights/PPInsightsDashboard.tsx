@@ -7,6 +7,12 @@ import BillGenRecon from './components/BillGenRecon';
 import MOMLenderBilling from './components/MOMLenderBilling';
 import DailyDuesRecon from './components/DailyDuesRecon';
 import RepaymentSnapshot from './components/RepaymentSnapshot';
+import DPDRecon from './components/DPDRecon';
+import LoanAccountStatus from './components/LoanAccountStatus';
+import CreditLimitSpread from './components/CreditLimitSpread';
+import AgeCategorization from './components/AgeCategorization';
+import GeographicDistribution from './components/GeographicDistribution';
+import DemographicsKPI from './components/DemographicsKPI';
 import PPInsightsThemeBridge from './PPInsightsThemeBridge';
 import type { DashboardViewId, ReconType } from './types';
 
@@ -1353,10 +1359,22 @@ const PPInsightsDashboard = () => {
         return <RiskAssetQuality />;
       case 'finance':
         return <FinanceRecon />;
+      case 'dpdRecon':
+        return <DPDRecon />;
       case 'customer360':
         return <Customer360 />;
       case 'watchtower':
         return <SystemWatchtower />;
+      case 'portfolioAccountStatus':
+        return <LoanAccountStatus />;
+      case 'portfolioLimitSpread':
+        return <CreditLimitSpread />;
+      case 'portfolioVintage':
+        return <AgeCategorization />;
+      case 'portfolioGeo':
+        return <GeographicDistribution />;
+      case 'portfolioDemographics':
+        return <DemographicsKPI />;
       default:
         return <div>Module coming soon...</div>;
     }
