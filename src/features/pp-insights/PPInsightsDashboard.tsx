@@ -14,6 +14,7 @@ import MOMLenderBilling from './components/MOMLenderBilling';
 import DailyDuesRecon from './components/DailyDuesRecon';
 import RepaymentSnapshot from './components/RepaymentSnapshot';
 import DPDRecon from './components/DPDRecon';
+import DPDDeltaDetails from './components/DPDDeltaDetails';
 import PortfolioMaster from './components/PortfolioMaster';
 import PPInsightsThemeBridge from './PPInsightsThemeBridge';
 import type { DashboardViewId, ReconType } from './types';
@@ -55,6 +56,7 @@ const PPInsightsDashboard = () => {
   useEffect(() => {
     const state = (location.state as { activeView?: DashboardViewId; financeTab?: typeof financeTab } | null) ?? {};
     if (state.activeView === 'finance') setActiveView('finance');
+    if (state.activeView === 'dpdRecon') setActiveView('dpdRecon');
     if (state.financeTab === 'repayment') setFinanceTab('repayment');
   }, [location.pathname, location.state]);
 
@@ -1472,6 +1474,16 @@ const PPInsightsDashboard = () => {
             <ContentPane>
               <ContentInner>
                 <RepaymentDrillDown />
+              </ContentInner>
+            </ContentPane>
+          }
+        />
+        <Route
+          path="dpd-delta-details/:dpdCount"
+          element={
+            <ContentPane>
+              <ContentInner>
+                <DPDDeltaDetails />
               </ContentInner>
             </ContentPane>
           }
