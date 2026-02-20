@@ -16,17 +16,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   { id: 'customer360', label: 'Customer 360' },
   { id: 'watchtower', label: 'System Watchtower' },
-  {
-    id: 'portfolioAccountStatus',
-    label: 'Portfolio Analytics',
-    children: [
-      { id: 'portfolioAccountStatus', label: 'Account Status' },
-      { id: 'portfolioLimitSpread', label: 'Limit Spread' },
-      { id: 'portfolioVintage', label: 'Vintage (Age)' },
-      { id: 'portfolioGeo', label: 'Geographic Map' },
-      { id: 'portfolioDemographics', label: 'Demographics' },
-    ],
-  },
+  { id: 'portfolioMaster', label: 'Portfolio Analytics' },
 ];
 
 export const FUNNEL_STAGES: FunnelStage[] = [

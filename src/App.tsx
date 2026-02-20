@@ -14,7 +14,7 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/pp-insights" replace />} />
-          <Route path="/pp-insights" element={<PPInsightsDashboard />} />
+          <Route path="/pp-insights/*" element={<PPInsightsDashboard />} />
           <Route path="*" element={<Navigate to="/pp-insights" replace />} />
         </Routes>
       </BrowserRouter>

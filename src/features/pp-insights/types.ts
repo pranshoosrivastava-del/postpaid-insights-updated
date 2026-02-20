@@ -10,11 +10,7 @@ export type DashboardViewId =
   | 'dpdRecon'
   | 'customer360'
   | 'watchtower'
-  | 'portfolioAccountStatus'
-  | 'portfolioLimitSpread'
-  | 'portfolioVintage'
-  | 'portfolioGeo'
-  | 'portfolioDemographics';
+  | 'portfolioMaster';
 
 export type StageColor =
   | 'blue'

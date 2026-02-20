@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const MONTHS = ['Jan-2026', 'Feb-2026'];
 
@@ -94,7 +95,16 @@ const BillGenRecon = () => {
                       diff === 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
                     }`}
                   >
-                    {diff === 0 ? '0' : diff > 0 ? `+${fmt(diff)}` : `-${fmt(Math.abs(diff))}`}
+                    {diff === 0 ? (
+                      '0'
+                    ) : (
+                      <Link
+                        to={`/pp-insights/bill-delta-details/${encodeURIComponent(dim)}`}
+                        className="font-bold text-red-700 underline decoration-red-300 underline-offset-2 hover:text-red-900"
+                      >
+                        {diff > 0 ? `+${fmt(diff)}` : `-${fmt(Math.abs(diff))}`}
+                      </Link>
+                    )}
                   </td>
                 </tr>
               );

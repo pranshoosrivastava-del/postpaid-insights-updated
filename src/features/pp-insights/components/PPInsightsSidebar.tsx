@@ -7,7 +7,6 @@ import {
   CalendarClock,
   ChevronDown,
   CircleUserRound,
-  Globe,
   LayoutDashboard,
   MapPin,
   PieChart,
@@ -37,16 +36,11 @@ const NAV_ICONS: Partial<Record<DashboardViewId, ComponentType<{ className?: str
   dpdRecon: CalendarClock,
   customer360: CircleUserRound,
   watchtower: Radar,
-  portfolioAccountStatus: PieChart,
-  portfolioLimitSpread: BarChart3,
-  portfolioVintage: CalendarClock,
-  portfolioGeo: MapPin,
-  portfolioDemographics: Users,
+  portfolioMaster: BarChart3,
 };
 
 const GROUP_ICONS: Record<string, ComponentType<{ className?: string }>> = {
   'Finance & Recon': ShieldEllipsis,
-  'Portfolio Analytics': Globe,
 };
 
 const Sidebar = styled.aside`

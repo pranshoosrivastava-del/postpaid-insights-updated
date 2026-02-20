@@ -1,18 +1,16 @@
 import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import { FUNNEL_STAGES, NAV_ITEMS } from './constants';
 import PPInsightsSidebar from './components/PPInsightsSidebar';
 import ReconciliationModal from './components/ReconciliationModal';
 import BillGenRecon from './components/BillGenRecon';
+import BillGenDeltaDetails from './components/BillGenDeltaDetails';
 import MOMLenderBilling from './components/MOMLenderBilling';
 import DailyDuesRecon from './components/DailyDuesRecon';
 import RepaymentSnapshot from './components/RepaymentSnapshot';
 import DPDRecon from './components/DPDRecon';
-import LoanAccountStatus from './components/LoanAccountStatus';
-import CreditLimitSpread from './components/CreditLimitSpread';
-import AgeCategorization from './components/AgeCategorization';
-import GeographicDistribution from './components/GeographicDistribution';
-import DemographicsKPI from './components/DemographicsKPI';
+import PortfolioMaster from './components/PortfolioMaster';
 import PPInsightsThemeBridge from './PPInsightsThemeBridge';
 import type { DashboardViewId, ReconType } from './types';
 
@@ -1365,16 +1363,8 @@ const PPInsightsDashboard = () => {
         return <Customer360 />;
       case 'watchtower':
         return <SystemWatchtower />;
-      case 'portfolioAccountStatus':
-        return <LoanAccountStatus />;
-      case 'portfolioLimitSpread':
-        return <CreditLimitSpread />;
-      case 'portfolioVintage':
-        return <AgeCategorization />;
-      case 'portfolioGeo':
-        return <GeographicDistribution />;
-      case 'portfolioDemographics':
-        return <DemographicsKPI />;
+      case 'portfolioMaster':
+        return <PortfolioMaster />;
       default:
         return <div>Module coming soon...</div>;
     }
@@ -1383,17 +1373,35 @@ const PPInsightsDashboard = () => {
   return (
     <PageShell className="pp-insights">
       <PPInsightsThemeBridge />
-      <PPInsightsSidebar
-        navItems={NAV_ITEMS}
-        activeView={activeView}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        onViewChange={changeView}
-      />
-
-      <ContentPane>
-        <ContentInner>{renderContent()}</ContentInner>
-      </ContentPane>
+      <Routes>
+        <Route
+          path="bill-delta-details/:dimension"
+          element={
+            <ContentPane>
+              <ContentInner>
+                <BillGenDeltaDetails />
+              </ContentInner>
+            </ContentPane>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <>
+              <PPInsightsSidebar
+                navItems={NAV_ITEMS}
+                activeView={activeView}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onViewChange={changeView}
+              />
+              <ContentPane>
+                <ContentInner>{renderContent()}</ContentInner>
+              </ContentPane>
+            </>
+          }
+        />
+      </Routes>
 
       <ReconciliationModal
         isOpen={showReconciliationModal}
