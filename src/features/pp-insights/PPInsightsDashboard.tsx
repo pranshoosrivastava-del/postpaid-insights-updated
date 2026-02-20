@@ -1,11 +1,15 @@
-import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { FUNNEL_STAGES, NAV_ITEMS } from './constants';
 import PPInsightsSidebar from './components/PPInsightsSidebar';
 import ReconciliationModal from './components/ReconciliationModal';
 import BillGenRecon from './components/BillGenRecon';
 import BillGenDeltaDetails from './components/BillGenDeltaDetails';
+import DailyDuesDeltaDetails from './components/DailyDuesDeltaDetails';
+import MomDeltaDetails from './components/MomDeltaDetails';
+import RepaymentDeltaDetails from './components/RepaymentDeltaDetails';
+import RepaymentDrillDown from './components/RepaymentDrillDown';
 import MOMLenderBilling from './components/MOMLenderBilling';
 import DailyDuesRecon from './components/DailyDuesRecon';
 import RepaymentSnapshot from './components/RepaymentSnapshot';
@@ -32,14 +36,27 @@ const ContentInner = styled.div`
 `;
 
 const PPInsightsDashboard = () => {
-  const [activeView, setActiveView] = useState<DashboardViewId>('cockpit');
+  const location = useLocation();
+  const [activeView, setActiveView] = useState<DashboardViewId>(() => {
+    const state = (location.state as { activeView?: DashboardViewId } | null) ?? {};
+    return state.activeView === 'finance' ? 'finance' : 'cockpit';
+  });
   const [expandedFunnelStage, setExpandedFunnelStage] = useState<string | null>(null);
   const [showReconciliationModal, setShowReconciliationModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [reconComments, setReconComments] = useState('');
   const [selectedReconType, setSelectedReconType] = useState<ReconType>('auto');
   const [selectedReconItems, setSelectedReconItems] = useState<string[]>([]);
-  const [financeTab, setFinanceTab] = useState<'overview' | 'billgen' | 'mom' | 'daily' | 'repayment'>('overview');
+  const [financeTab, setFinanceTab] = useState<'overview' | 'billgen' | 'mom' | 'daily' | 'repayment'>(() => {
+    const state = (location.state as { financeTab?: 'repayment' } | null) ?? {};
+    return state.financeTab === 'repayment' ? 'repayment' : 'overview';
+  });
+
+  useEffect(() => {
+    const state = (location.state as { activeView?: DashboardViewId; financeTab?: typeof financeTab } | null) ?? {};
+    if (state.activeView === 'finance') setActiveView('finance');
+    if (state.financeTab === 'repayment') setFinanceTab('repayment');
+  }, [location.pathname, location.state]);
 
   const toggleFunnelStage = (stageId: string) => {
     setExpandedFunnelStage(expandedFunnelStage === stageId ? null : stageId);
@@ -954,6 +971,41 @@ const PPInsightsDashboard = () => {
         </div>
 
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 className="mb-3 text-sm font-semibold text-gray-700">Active Escalations & Deltas</h3>
+          <p className="mb-4 text-xs text-gray-500">Total value of discrepancies across Finance & Recon. Click a row to open the drill-down.</p>
+          <div className="space-y-2">
+            <Link
+              to="/pp-insights/bill-delta-details/Principal"
+              className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3 text-left transition-colors hover:bg-blue-50 hover:border-blue-200"
+            >
+              <span className="text-sm font-medium text-gray-900">Billing Deltas</span>
+              <span className="text-sm font-bold text-red-600">₹22,707</span>
+            </Link>
+            <Link
+              to="/pp-insights/daily-dues-delta/Feb-2026%20Bill%20Cycle%20(T-1)"
+              className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3 text-left transition-colors hover:bg-blue-50 hover:border-blue-200"
+            >
+              <span className="text-sm font-medium text-gray-900">Daily Dues Deltas</span>
+              <span className="text-sm font-bold text-red-600">₹5,200</span>
+            </Link>
+            <Link
+              to="/pp-insights/mom-delta/Feb-2026"
+              className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3 text-left transition-colors hover:bg-blue-50 hover:border-blue-200"
+            >
+              <span className="text-sm font-medium text-gray-900">MOM Billing Variance</span>
+              <span className="text-sm font-bold text-red-600">₹22,707</span>
+            </Link>
+            <Link
+              to="/pp-insights/repayment-delta"
+              className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3 text-left transition-colors hover:bg-blue-50 hover:border-blue-200"
+            >
+              <span className="text-sm font-medium text-gray-900">Repayment Settlement Deltas</span>
+              <span className="text-sm font-bold text-red-600">47 records</span>
+            </Link>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold text-gray-900">L1 Ledger Variance</h2>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -1380,6 +1432,46 @@ const PPInsightsDashboard = () => {
             <ContentPane>
               <ContentInner>
                 <BillGenDeltaDetails />
+              </ContentInner>
+            </ContentPane>
+          }
+        />
+        <Route
+          path="daily-dues-delta/:dimension"
+          element={
+            <ContentPane>
+              <ContentInner>
+                <DailyDuesDeltaDetails />
+              </ContentInner>
+            </ContentPane>
+          }
+        />
+        <Route
+          path="mom-delta/:month"
+          element={
+            <ContentPane>
+              <ContentInner>
+                <MomDeltaDetails />
+              </ContentInner>
+            </ContentPane>
+          }
+        />
+        <Route
+          path="repayment-delta"
+          element={
+            <ContentPane>
+              <ContentInner>
+                <RepaymentDeltaDetails />
+              </ContentInner>
+            </ContentPane>
+          }
+        />
+        <Route
+          path="repayment-details/:metricType"
+          element={
+            <ContentPane>
+              <ContentInner>
+                <RepaymentDrillDown />
               </ContentInner>
             </ContentPane>
           }

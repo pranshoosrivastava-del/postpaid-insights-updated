@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import type { DashboardViewId, NavItem } from '../types';
 import {
   BadgeIndianRupee,
-  BarChart3,
   CalendarClock,
   ChevronDown,
   CircleUserRound,
@@ -14,6 +13,7 @@ import {
   ShieldCheck,
   ShieldEllipsis,
   Target,
+  User,
   Users,
   WalletCards,
 } from 'lucide-react';
@@ -36,7 +36,7 @@ const NAV_ICONS: Partial<Record<DashboardViewId, ComponentType<{ className?: str
   dpdRecon: CalendarClock,
   customer360: CircleUserRound,
   watchtower: Radar,
-  portfolioMaster: BarChart3,
+  portfolioMaster: User,
 };
 
 const GROUP_ICONS: Record<string, ComponentType<{ className?: string }>> = {

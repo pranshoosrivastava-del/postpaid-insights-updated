@@ -6,6 +6,8 @@ interface LenderEmailModalProps {
   onSend: () => void;
   dimension: string;
   selectedCount: number;
+  /** Subject line prefix, e.g. "Daily Dues Discrepancy", "MOM Billing", "Repayment Settlement". Default: "Billing Discrepancy" */
+  subjectPrefix?: string;
 }
 
 const MONTH_YEAR = new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
@@ -16,8 +18,8 @@ We have identified discrepancies in the latest billing file sync for the attache
 Thanks,
 Finance Ops`;
 
-const LenderEmailModal = ({ isOpen, onClose, onSend, dimension, selectedCount }: LenderEmailModalProps) => {
-  const subject = `URGENT: Billing Discrepancy Alert - ${MONTH_YEAR} - ${dimension}`;
+const LenderEmailModal = ({ isOpen, onClose, onSend, dimension, selectedCount, subjectPrefix = 'Billing Discrepancy' }: LenderEmailModalProps) => {
+  const subject = `URGENT: ${subjectPrefix} Alert - ${MONTH_YEAR} - ${dimension}`;
   const attachmentName = `Discrepancy_Report_${selectedCount}_LANs.csv`;
   const overlayRef = useRef<HTMLDivElement>(null);
 

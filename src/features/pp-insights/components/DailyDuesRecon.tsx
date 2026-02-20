@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface DueComponent {
   label: string;
@@ -87,9 +88,16 @@ const DailyDuesRecon = () => {
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">Variance</div>
-                    <div className={`font-bold ${diff === 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {diff === 0 ? '₹0' : fmt(diff)}
-                    </div>
+                    {diff === 0 ? (
+                      <div className="font-bold text-green-600">₹0</div>
+                    ) : (
+                      <Link
+                        to={`/pp-insights/daily-dues-delta/${encodeURIComponent(row.label)}`}
+                        className="font-bold text-red-600 underline decoration-red-300 underline-offset-2 hover:text-red-800"
+                      >
+                        {fmt(diff)}
+                      </Link>
+                    )}
                   </div>
                 </div>
               </button>
@@ -109,13 +117,23 @@ const DailyDuesRecon = () => {
                     <tbody className="divide-y divide-gray-200">
                       {row.components.map((c) => {
                         const cd = c.paytm - c.lender;
+                        const dimensionSlug = `${row.label} - ${c.label}`;
                         return (
                           <tr key={c.label} className="hover:bg-white">
                             <td className="px-6 py-2 text-sm text-gray-700">{c.label}</td>
                             <td className="px-4 py-2 text-right text-sm text-gray-900">{fmt(c.paytm)}</td>
                             <td className="px-4 py-2 text-right text-sm text-gray-900">{fmt(c.lender)}</td>
-                            <td className={`px-4 py-2 text-right text-sm font-semibold ${cd === 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              {cd === 0 ? '₹0' : fmt(cd)}
+                            <td className="px-4 py-2 text-right text-sm font-semibold">
+                              {cd === 0 ? (
+                                <span className="text-green-600">₹0</span>
+                              ) : (
+                                <Link
+                                  to={`/pp-insights/daily-dues-delta/${encodeURIComponent(dimensionSlug)}`}
+                                  className="text-red-600 underline decoration-red-300 underline-offset-2 hover:text-red-800"
+                                >
+                                  {fmt(cd)}
+                                </Link>
+                              )}
                             </td>
                             <td className="px-4 py-2 text-center">
                               <span

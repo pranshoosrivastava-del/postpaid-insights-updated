@@ -16,7 +16,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   { id: 'customer360', label: 'Customer 360' },
   { id: 'watchtower', label: 'System Watchtower' },
-  { id: 'portfolioMaster', label: 'Portfolio Analytics' },
+  { id: 'portfolioMaster', label: 'User Insights' },
 ];
 
 export const FUNNEL_STAGES: FunnelStage[] = [

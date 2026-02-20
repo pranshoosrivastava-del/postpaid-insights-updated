@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface MonthRow {
   billDate: string;
@@ -9,15 +10,17 @@ interface MonthRow {
   lfApplied: number;
   bfApplied: number;
   cfApplied: number;
+  /** Variance vs lender file (e.g. billing total delta). When !== 0, shown as red clickable link. */
+  variance: number;
 }
 
 const MOCK_DATA: MonthRow[] = [
-  { billDate: 'Feb-2026', totalBills: 148200, billsValue0: 9100, billedAmount: 26800000, lastBillPrincipalDue: 22400000, lfApplied: 310000, bfApplied: 162000, cfApplied: 482000 },
-  { billDate: 'Jan-2026', totalBills: 142500, billsValue0: 8420, billedAmount: 24500000, lastBillPrincipalDue: 20100000, lfApplied: 280000, bfApplied: 150000, cfApplied: 450000 },
-  { billDate: 'Dec-2025', totalBills: 138800, billsValue0: 7950, billedAmount: 23200000, lastBillPrincipalDue: 19600000, lfApplied: 265000, bfApplied: 142000, cfApplied: 435000 },
-  { billDate: 'Nov-2025', totalBills: 134100, billsValue0: 7680, billedAmount: 21800000, lastBillPrincipalDue: 18200000, lfApplied: 248000, bfApplied: 131000, cfApplied: 412000 },
-  { billDate: 'Oct-2025', totalBills: 130500, billsValue0: 7200, billedAmount: 20500000, lastBillPrincipalDue: 17100000, lfApplied: 234000, bfApplied: 126000, cfApplied: 398000 },
-  { billDate: 'Sep-2025', totalBills: 126200, billsValue0: 6800, billedAmount: 19100000, lastBillPrincipalDue: 16000000, lfApplied: 218000, bfApplied: 118000, cfApplied: 380000 },
+  { billDate: 'Feb-2026', totalBills: 148200, billsValue0: 9100, billedAmount: 26800000, lastBillPrincipalDue: 22400000, lfApplied: 310000, bfApplied: 162000, cfApplied: 482000, variance: 22707 },
+  { billDate: 'Jan-2026', totalBills: 142500, billsValue0: 8420, billedAmount: 24500000, lastBillPrincipalDue: 20100000, lfApplied: 280000, bfApplied: 150000, cfApplied: 450000, variance: 0 },
+  { billDate: 'Dec-2025', totalBills: 138800, billsValue0: 7950, billedAmount: 23200000, lastBillPrincipalDue: 19600000, lfApplied: 265000, bfApplied: 142000, cfApplied: 435000, variance: 4100 },
+  { billDate: 'Nov-2025', totalBills: 134100, billsValue0: 7680, billedAmount: 21800000, lastBillPrincipalDue: 18200000, lfApplied: 248000, bfApplied: 131000, cfApplied: 412000, variance: 0 },
+  { billDate: 'Oct-2025', totalBills: 130500, billsValue0: 7200, billedAmount: 20500000, lastBillPrincipalDue: 17100000, lfApplied: 234000, bfApplied: 126000, cfApplied: 398000, variance: 0 },
+  { billDate: 'Sep-2025', totalBills: 126200, billsValue0: 6800, billedAmount: 19100000, lastBillPrincipalDue: 16000000, lfApplied: 218000, bfApplied: 118000, cfApplied: 380000, variance: 0 },
 ];
 
 const fmt = (n: number) => n.toLocaleString('en-IN');
@@ -68,6 +71,7 @@ const MOMLenderBilling = () => {
                 <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-gray-600">LF Applied</th>
                 <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-gray-600">BF Applied</th>
                 <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-gray-600">CF Applied</th>
+                <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-gray-600">Variance</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -81,6 +85,18 @@ const MOMLenderBilling = () => {
                   <td className="px-4 py-2.5 text-right text-sm text-red-600">₹{fmt(row.lfApplied)}</td>
                   <td className="px-4 py-2.5 text-right text-sm text-yellow-700">₹{fmt(row.bfApplied)}</td>
                   <td className="px-4 py-2.5 text-right text-sm text-green-600">₹{fmt(row.cfApplied)}</td>
+                  <td className="px-4 py-2.5 text-right text-sm font-semibold">
+                    {row.variance === 0 ? (
+                      <span className="text-green-600">₹0</span>
+                    ) : (
+                      <Link
+                        to={`/pp-insights/mom-delta/${encodeURIComponent(row.billDate)}`}
+                        className="text-red-600 underline decoration-red-300 underline-offset-2 hover:text-red-800"
+                      >
+                        ₹{fmt(row.variance)}
+                      </Link>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
