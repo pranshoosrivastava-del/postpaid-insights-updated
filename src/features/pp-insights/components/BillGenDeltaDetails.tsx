@@ -286,9 +286,13 @@ const BillGenDeltaDetails = () => {
                       />
                     </td>
                     <td className="border-r border-gray-200 px-3 py-2.5">
-                      <span className="cursor-pointer font-medium text-blue-600 underline decoration-blue-300 underline-offset-2 hover:text-blue-800">
+                      <Link
+                        to={`/pp-insights/customer-360/${encodeURIComponent(row.paytmLan)}`}
+                        className="font-medium text-blue-600 underline decoration-blue-300 underline-offset-2 hover:underline hover:text-blue-800 cursor-pointer"
+                        aria-label={`Open Customer 360 for ${row.paytmLan}`}
+                      >
                         {row.paytmLan}
-                      </span>
+                      </Link>
                     </td>
                     <td className="border-r border-gray-200 px-3 py-2.5 text-sm text-gray-900">
                       {row.lenderLan}

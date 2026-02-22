@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import ActionableInsights from './ActionableInsights';
 
 interface DPDRow {
   dpdCount: number;
@@ -34,6 +35,24 @@ const DPDRecon = () => {
           Live DPD mismatches: Lender file vs Paytm LMS. Click a non-zero Delta to investigate.
         </p>
       </div>
+
+      <ActionableInsights
+        insights={[
+          {
+            type: 'danger',
+            title: 'Critical mismatch',
+            description: 'Critical mismatch at DPD 17: Paytm LMS shows 2,290 LANs vs Lender showing 2,252 LANs (Delta: -38).',
+            actionText: 'Investigate DPD 17 Delta',
+            actionLink: '/pp-insights/dpd-delta-details/17',
+          },
+          {
+            type: 'success',
+            title: 'Reconciled buckets',
+            description: "DPD buckets 90+ are 100% reconciled for today's sync.",
+            actionText: 'None Required',
+          },
+        ]}
+      />
 
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
         <table className="w-full min-w-[500px] border-collapse">

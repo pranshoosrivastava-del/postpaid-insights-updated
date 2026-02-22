@@ -11,6 +11,7 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Finance & Recon',
     children: [
       { id: 'finance', label: 'Overview' },
+      { id: 'ingestionAlerts', label: 'Ingestion Alerts' },
       { id: 'dpdRecon', label: 'DPD Recon' },
     ],
   },

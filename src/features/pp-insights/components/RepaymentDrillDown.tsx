@@ -181,8 +181,13 @@ const RepaymentDrillDown = () => {
             ) : (
               filteredRows.map((row) => (
                 <tr key={row.paytmLan} className="hover:bg-gray-50/80">
-                  <td className="border-r border-gray-200 px-4 py-3 font-medium text-blue-600">
-                    {row.paytmLan}
+                  <td className="border-r border-gray-200 px-4 py-3">
+                    <Link
+                      to={`/pp-insights/customer-360/${encodeURIComponent(row.paytmLan)}`}
+                      className="font-medium text-blue-600 underline decoration-blue-300 underline-offset-2 hover:underline hover:text-blue-800 cursor-pointer"
+                    >
+                      {row.paytmLan}
+                    </Link>
                   </td>
                   <td className="border-r border-gray-200 px-4 py-3 text-sm text-gray-900">
                     {row.lenderLan}

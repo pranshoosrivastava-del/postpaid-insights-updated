@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import ActionableInsights from './ActionableInsights';
 
 const MONTHS = ['Jan-2026', 'Feb-2026'];
 
@@ -56,6 +57,23 @@ const BillGenRecon = () => {
 
   return (
     <div className="space-y-4">
+      <ActionableInsights
+        insights={[
+          {
+            type: 'danger',
+            title: 'LPF mismatch',
+            description: '₹5,200 mismatch detected in Total LPF Amount for Feb-2026.',
+            actionText: 'Investigate LPF Delta',
+            actionLink: '/finance-recon/bill-delta-details/lpf',
+          },
+          {
+            type: 'success',
+            title: 'Reconciled',
+            description: 'Principal, CF, and BF amounts are 100% reconciled for the current month.',
+            actionText: 'None',
+          },
+        ]}
+      />
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-900">Bill Gen Recon — Monthly Snapshot</h2>
         <select

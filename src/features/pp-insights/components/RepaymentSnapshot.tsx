@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import ActionableInsights from './ActionableInsights';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const YEARS = ['2025', '2026'];
@@ -48,6 +49,24 @@ const RepaymentSnapshot = () => {
 
   return (
     <div className="space-y-5">
+      <ActionableInsights
+        insights={[
+          {
+            type: 'info',
+            title: 'Collection efficiency',
+            description: 'Collection Efficiency stands at 82.6% with an outstanding amount of ₹46.60 L.',
+            actionText: 'View Outstanding Accounts',
+            actionLink: '/finance-recon/repayment-details/outstanding',
+          },
+          {
+            type: 'danger',
+            title: 'Unreconciled repayments',
+            description: 'Critical: 47 Repayments showing Paytm as paid, but Lender file as mismatched.',
+            actionText: 'Investigate 47 LANs',
+            actionLink: '/finance-recon/repayment-details/unreconciled',
+          },
+        ]}
+      />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-lg font-bold text-gray-900">Repayment Snapshot</h2>
         <div className="flex flex-wrap items-center gap-3">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import ActionableInsights from './ActionableInsights';
 
 interface DueComponent {
   label: string;
@@ -55,6 +56,18 @@ const DailyDuesRecon = () => {
       <p className="text-sm text-gray-600">
         TOTAL DUE = Principal Billed + CF + GST on CF + BF + LPF. Click a row to drill into sub-components.
       </p>
+
+      <ActionableInsights
+        insights={[
+          {
+            type: 'danger',
+            title: 'T-1 variance',
+            description: '₹6,700 variance in Feb-2026 T-1 cycle. Driven entirely by Bounce Fee (-₹3,200) and LPF (-₹3,500) mismatches.',
+            actionText: 'Escalate T-1 Delta',
+            actionLink: '/finance-recon/daily-dues-delta/total',
+          },
+        ]}
+      />
 
       <div className="space-y-3">
         {MOCK_DATA.map((row) => {

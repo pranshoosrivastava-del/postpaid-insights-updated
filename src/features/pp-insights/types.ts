@@ -7,6 +7,7 @@ export type DashboardViewId =
   | 'collections'
   | 'risk'
   | 'finance'
+  | 'ingestionAlerts'
   | 'dpdRecon'
   | 'customer360'
   | 'watchtower'

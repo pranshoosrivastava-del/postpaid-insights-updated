@@ -14,6 +14,7 @@ import {
   Area,
 } from 'recharts';
 import { Map, ChevronDown } from 'lucide-react';
+import ActionableInsights from './ActionableInsights';
 
 // ─── Data ─────────────────────────────────────────────────────────────────
 const ACCOUNT_STATUS_DATA = [
@@ -250,6 +251,25 @@ const PortfolioMaster = () => {
           )}
         </div>
       </div>
+
+      <ActionableInsights
+        insights={[
+          {
+            type: 'info',
+            title: 'Limit band concentration',
+            description: '75% of the Active Base is concentrated in the ₹1K-₹5K limit band. High headroom for limit enhancement.',
+            actionText: 'View Eligible Cohort',
+            actionLink: '#',
+          },
+          {
+            type: 'warning',
+            title: 'Geographic concentration risk',
+            description: 'UP and Delhi contribute to >34% of the total portfolio.',
+            actionText: 'View Geo Distribution',
+            actionLink: '#',
+          },
+        ]}
+      />
 
       {/* Grid */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">

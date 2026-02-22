@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import ActionableInsights from './ActionableInsights';
 
 interface MonthRow {
   billDate: string;
@@ -40,6 +41,24 @@ const MOMLenderBilling = () => {
 
   return (
     <div className="space-y-4">
+      <ActionableInsights
+        insights={[
+          {
+            type: 'warning',
+            title: 'Billing variance',
+            description: '₹22,707 total billing variance flagged for Feb-2026.',
+            actionText: 'Review Feb Variance',
+            actionLink: '/finance-recon/mom-delta/Feb-2026',
+          },
+          {
+            type: 'info',
+            title: 'Prior month',
+            description: 'Prior month (Jan-2026) is fully reconciled with ₹0 variance.',
+            actionText: 'View Jan Data',
+            actionLink: '#',
+          },
+        ]}
+      />
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-900">MOM Lender Billing — Historical Trend</h2>
         <div className="flex overflow-hidden rounded-lg border border-gray-300">

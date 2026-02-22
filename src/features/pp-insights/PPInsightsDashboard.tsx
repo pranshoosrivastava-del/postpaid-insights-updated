@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FUNNEL_STAGES, NAV_ITEMS } from './constants';
 import PPInsightsSidebar from './components/PPInsightsSidebar';
@@ -15,6 +15,9 @@ import DailyDuesRecon from './components/DailyDuesRecon';
 import RepaymentSnapshot from './components/RepaymentSnapshot';
 import DPDRecon from './components/DPDRecon';
 import DPDDeltaDetails from './components/DPDDeltaDetails';
+import Customer360 from './components/Customer360';
+import ActionableInsights from './components/ActionableInsights';
+import IngestionAlertsPage from './components/IngestionAlertsPage';
 import PortfolioMaster from './components/PortfolioMaster';
 import PPInsightsThemeBridge from './PPInsightsThemeBridge';
 import type { DashboardViewId, ReconType } from './types';
@@ -54,19 +57,43 @@ const PPInsightsDashboard = () => {
   });
 
   useEffect(() => {
+    if (location.pathname.includes('/customer-360')) {
+      setActiveView('customer360');
+      return;
+    }
+    if (location.pathname.includes('/ingestion-alerts')) {
+      setActiveView('ingestionAlerts');
+      return;
+    }
     const state = (location.state as { activeView?: DashboardViewId; financeTab?: typeof financeTab } | null) ?? {};
     if (state.activeView === 'finance') setActiveView('finance');
+    if (state.activeView === 'ingestionAlerts') setActiveView('ingestionAlerts');
     if (state.activeView === 'dpdRecon') setActiveView('dpdRecon');
     if (state.financeTab === 'repayment') setFinanceTab('repayment');
   }, [location.pathname, location.state]);
+
+  const navigate = useNavigate();
 
   const toggleFunnelStage = (stageId: string) => {
     setExpandedFunnelStage(expandedFunnelStage === stageId ? null : stageId);
   };
 
   const changeView = (viewId: DashboardViewId) => {
-    setActiveView(viewId);
     setExpandedFunnelStage(null);
+    if (viewId === 'customer360') {
+      navigate('/pp-insights/customer-360');
+      setActiveView('customer360');
+      return;
+    }
+    if (viewId === 'ingestionAlerts') {
+      navigate('/pp-insights/ingestion-alerts');
+      setActiveView('ingestionAlerts');
+      return;
+    }
+    if (location.pathname.includes('/customer-360') || location.pathname.includes('/ingestion-alerts')) {
+      navigate('/pp-insights', { state: { activeView: viewId } });
+    }
+    setActiveView(viewId);
   };
 
   const openReconciliationModal = () => {
@@ -911,6 +938,24 @@ const PPInsightsDashboard = () => {
         {financeTab === 'repayment' && <RepaymentSnapshot />}
 
         {financeTab === 'overview' && <>
+        <ActionableInsights
+          insights={[
+            {
+              type: 'danger',
+              title: 'Total delta',
+              description: 'Total Delta of ₹85,420 detected across billing and daily dues.',
+              actionText: 'View active escalations',
+              actionLink: '#',
+            },
+            {
+              type: 'warning',
+              title: 'Unreconciled repayments',
+              description: '47 Unreconciled Repayments pending lender settlement.',
+              actionText: 'Resolve Repayments',
+              actionLink: '/finance-recon/repayment-details/unreconciled',
+            },
+          ]}
+        />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
             <h3 className="mb-3 text-sm font-semibold text-gray-700">Collection Efficiency Funnel</h3>
@@ -1191,147 +1236,6 @@ const PPInsightsDashboard = () => {
     );
   };
 
-  const Customer360 = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Customer 360</h1>
-        <div className="flex gap-2">
-          <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
-            Block Account
-          </button>
-          <button className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50">
-            Export Ledger
-          </button>
-        </div>
-      </div>
-
-      <div className="rounded-xl bg-gradient-to-r from-cyan-600 to-blue-700 p-6 text-white">
-        <div className="flex items-start justify-between">
-          <div>
-            <h2 className="mb-2 text-2xl font-bold">Rahul Sharma</h2>
-            <div className="space-y-1 text-sm text-cyan-100">
-              <div>Mobile: +91 98765 43210</div>
-              <div>Paytm ID: PTM_8372649201</div>
-              <div>LAN: AB_LN_2024_847362</div>
-              <div>Partner: Aditya Birla Finance</div>
-            </div>
-          </div>
-          <div className="rounded-full bg-green-500 px-4 py-2 text-sm font-bold">ACTIVE</div>
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-1 text-xl font-bold text-gray-900">Financial Ledger</h2>
-        <div className="mb-1 text-sm text-gray-500">Total Outstanding</div>
-        <div className="mb-6 text-4xl font-bold text-red-600">₹18,450</div>
-
-        <div className="space-y-0 divide-y divide-gray-200">
-          <div className="flex items-center justify-between py-3">
-            <div className="font-medium text-gray-900">Principal Component</div>
-            <div className="font-medium text-gray-900">₹15,000</div>
-          </div>
-          {[
-            { label: 'Convenience Fee', amount: '₹450' },
-            { label: 'Late Payment Fee', amount: '₹2,500' },
-            { label: 'Bounce Charges', amount: '₹500' },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center justify-between py-3 pl-6">
-              <div className="text-sm text-gray-600">{item.label}</div>
-              <div className="text-sm text-gray-900">{item.amount}</div>
-            </div>
-          ))}
-          <div className="flex items-center justify-between py-3">
-            <div className="text-base font-bold text-gray-900">Total Due</div>
-            <div className="text-lg font-bold text-gray-900">₹18,450</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-xl font-bold text-gray-900">Repayment Behavior Log</h2>
-        <div className="space-y-4">
-          {[
-            {
-              amount: '₹5,000',
-              source: 'Manual App',
-              reason: null,
-              date: '2026-01-15',
-              status: 'Success',
-            },
-            {
-              amount: '₹10,000',
-              source: 'Auto Debit',
-              reason: 'Insufficient Funds',
-              date: '2026-01-07',
-              status: 'Failed',
-            },
-            {
-              amount: '₹8,200',
-              source: 'UPI AutoPay',
-              reason: null,
-              date: '2025-12-15',
-              status: 'Success',
-            },
-            {
-              amount: '₹8,200',
-              source: 'Auto Debit',
-              reason: 'Bank Server Down',
-              date: '2025-12-03',
-              status: 'Failed',
-            },
-            {
-              amount: '₹6,500',
-              source: 'Manual App',
-              reason: null,
-              date: '2025-11-14',
-              status: 'Success',
-            },
-          ].map((entry) => (
-            <div
-              key={entry.date + entry.amount}
-              className={`flex items-start gap-4 rounded-lg border p-4 ${
-                entry.status === 'Failed' ? 'border-red-100 bg-red-50' : 'border-gray-200 bg-white'
-              }`}
-            >
-              <div
-                className={`mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full ${
-                  entry.status === 'Success' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                }`}
-              >
-                {entry.status === 'Success' ? (
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                ) : (
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="text-base font-bold text-gray-900">{entry.amount}</div>
-                <div className="text-sm text-gray-600">Source: {entry.source}</div>
-                {entry.reason && (
-                  <div className="mt-0.5 text-sm text-red-600">Reason: {entry.reason}</div>
-                )}
-              </div>
-              <div className="text-right">
-                <div className="text-sm text-gray-500">{entry.date}</div>
-                <span
-                  className={`mt-1 inline-block rounded px-2 py-1 text-xs font-semibold ${
-                    entry.status === 'Success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}
-                >
-                  {entry.status}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   const SystemWatchtower = () => (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -1411,6 +1315,8 @@ const PPInsightsDashboard = () => {
         return <RiskAssetQuality />;
       case 'finance':
         return <FinanceRecon />;
+      case 'ingestionAlerts':
+        return <IngestionAlertsPage />;
       case 'dpdRecon':
         return <DPDRecon />;
       case 'customer360':
@@ -1486,6 +1392,63 @@ const PPInsightsDashboard = () => {
                 <DPDDeltaDetails />
               </ContentInner>
             </ContentPane>
+          }
+        />
+        <Route
+          path="ingestion-alerts"
+          element={
+            <>
+              <PPInsightsSidebar
+                navItems={NAV_ITEMS}
+                activeView="ingestionAlerts"
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onViewChange={changeView}
+              />
+              <ContentPane>
+                <ContentInner>
+                  <IngestionAlertsPage />
+                </ContentInner>
+              </ContentPane>
+            </>
+          }
+        />
+        <Route
+          path="customer-360"
+          element={
+            <>
+              <PPInsightsSidebar
+                navItems={NAV_ITEMS}
+                activeView="customer360"
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onViewChange={changeView}
+              />
+              <ContentPane>
+                <ContentInner>
+                  <Customer360 />
+                </ContentInner>
+              </ContentPane>
+            </>
+          }
+        />
+        <Route
+          path="customer-360/:paytmLan"
+          element={
+            <>
+              <PPInsightsSidebar
+                navItems={NAV_ITEMS}
+                activeView="customer360"
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onViewChange={changeView}
+              />
+              <ContentPane>
+                <ContentInner>
+                  <Customer360 />
+                </ContentInner>
+              </ContentPane>
+            </>
           }
         />
         <Route
